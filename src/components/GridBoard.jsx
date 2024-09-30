@@ -303,7 +303,7 @@ const GridBoard = () => {
           />
 
           <a
-            href={"https://github.com/wajeshubham/path-finder"}
+            href = {"https://github.com/pawandev200/Pathfinding---Visualizer"}
             target="_blank"
             className="items-center w-fit disabled:bg-gray-400 disabled:cursor-not-allowed inline-flex bg-gray-600 text-[15px] text-white px-4 py-2 rounded-md"
           >
