@@ -1,5 +1,4 @@
-// JavaScript representation of CellInterface
-// Used to describe the structure of a cell in the grid
+// Used to describe the structure and default values of a cell in the grid
 const CellInterface = {
   cellNumber: 0,
   col: 0,
@@ -10,17 +9,17 @@ const CellInterface = {
   isEndPoint: false,
   distanceFromStart: Infinity,
   previousCell: null, // Can be another cell object or null
-  isTarget: false, // Optional, can be omitted
+  isTarget: false, 
 };
 
-// Enum representation for searching algorithms in JavaScript
+// Enumerates the supported searching algorithms
 const SearchingAlgoEnum = {
   DIJKSTRA: "DIJKSTRA",
   BFS: "BFS",
   DFS: "DFS",
 };
 
-// JavaScript representation of AlgorithmOption
+// Describes an option for selecting and interacting with algorithms in the UI
 // Describes an algorithm option with its name, type, and a click handler
 const AlgorithmOption = {
   name: "", // Name of the algorithm
