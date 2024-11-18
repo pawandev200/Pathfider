@@ -352,27 +352,37 @@ const GridBoard = () => {
           </button>
         </div>
       ) : null}
+      // Container div for the grid, using Tailwind classes for styling
       <div className="grid grid-cols-gridmap overflow-auto w-full px-4 justify-start md:justify-center items-center my-3">
+        {/* Iterate over the rows of the grid */}
         {gridBoardCells.current.map((row, rowIndex) => {
           return (
             <React.Fragment key={rowIndex}>
+              {/* Iterate over the cells of the current row */}
               {row.map((cell, colIndex) => {
                 return (
+                   // Render the Cell component for each grid cell
                   <Cell
-                    key={colIndex}
-                    id={`cell-${cell.row}-${cell.col}`}
+                    key={colIndex} // Unique key for the cell, based on its column index
+                    id={`cell-${cell.row}-${cell.col}`} // Unique ID for each cell based on its position
+
+                    // Set mouse down state to true when the user clicks on the cell
                     onMouseDown={() => {
                       setIsMouseDown(true);
                     }}
+                    // Handle mouse entering the cell, triggering a callback with the row and column indices
                     onMouseEnter={() => {
                       onMouseEnter(rowIndex, colIndex);
                     }}
+                    // Set mouse down state to false when the mouse button is released
                     onMouseUp={() => {
                       setIsMouseDown(false);
                     }}
+                    // Handle cell click, allowing for specific cell interactions (e.g., setting start/end points or toggling walls)
                     onClick={() => {
                       onCellClick(cell, rowIndex, colIndex);
                     }}
+                     // Pass the current cell data to the Cell component
                     {...cell}
                   />
                 );
