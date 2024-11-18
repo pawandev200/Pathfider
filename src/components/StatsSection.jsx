@@ -1,20 +1,25 @@
 import React from "react";
 
+// A functional component that is used in the GridBoard.jsx file to display the statistics((cells scanned, cells traveled, and time taken) of the pathfinding algorithms
 const StatsSection = ({ stats }) => {
   return (
     <ul
       role="list"
       className="m-4 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 w-full"
     >
+      {/* Loop through the stats array to render each stat */}
       {stats.map((stat) => (
         <li key={stat.name} className="col-span-1 flex rounded-md shadow-sm">
+          {/* Left section for the icon with styling */}
           <div
             className={
               "flex-shrink-0 flex items-center justify-center w-12 text-white text-2xl font-medium rounded-l-md bg-pink-600"
             }
           >
+            {/* Render the icon dynamically */}
             <stat.icon className="h-5 w-5" />
           </div>
+           {/* Right section for the name and data of the stat */}
           <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white">
             <div className="flex-1 truncate px-4 py-2 text-sm">
               <button className="font-medium text-gray-900 hover:text-gray-600">
