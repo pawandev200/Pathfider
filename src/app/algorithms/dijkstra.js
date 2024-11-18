@@ -1,19 +1,25 @@
 import { getCells } from "../../utils/helpers";
 
+// Function to get unvisited neighbors of the current cell
 const getNeighbors = (currentCell, grid) => {
-  const neighbors = [];
+  const neighbors = []; // Array to hold neighboring cells
   const { col, row } = currentCell;
 
-  if (col > 0) neighbors.push(grid[row][col - 1]); // Left
-  if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]); // Right
-  if (row > 0) neighbors.push(grid[row - 1][col]); // Up
-  if (row < grid.length - 1) neighbors.push(grid[row + 1][col]); // Down
+  // Checking for valid neighbors (left, right, up, down)
+  if (col > 0) neighbors.push(grid[row][col - 1]); /
+  if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]); /
+  if (row > 0) neighbors.push(grid[row - 1][col]); 
+  if (row < grid.length - 1) neighbors.push(grid[row + 1][col]); 
 
+  // Return neighbors that are neither visited nor walls
   return neighbors.filter((n) => !n?.isVisited && !n?.isWall);
 };
 
-const traverseFurtherInGrid = (currentCell, grid, unvisitedCells) => {
+// Function to update neighbors' distances and previous cell
+const traverseFurtherInGrid = (currentCell, grid) => {
   let remainingNeighbors = getNeighbors(currentCell, grid);
+
+  // For each unvisited neighbor, calculate the distance and update the previous cell
   for (let cell of remainingNeighbors) {
     const newDistance = currentCell.distanceFromStart + 1;
     if (newDistance < cell.distanceFromStart) {
@@ -23,52 +29,60 @@ const traverseFurtherInGrid = (currentCell, grid, unvisitedCells) => {
   }
 };
 
+// Function to execute Dijkstra's algorithm
 export const dijkstra = (grid, startCell, endCell) => {
+  // Declaring variables to record the start time and end time
   const startTime = Date.now();
   let endTime;
 
-  // Initialize all cells
-  let unvisitedCells = getCells(grid); // Create a clone or flattened list
+  // Initializing all cells in the grid
+  let unvisitedCells = getCells(grid); // Flattened array of cells
   for (let cell of unvisitedCells) {
-    cell.distanceFromStart = Infinity;
-    cell.previousCell = null;
+    cell.distanceFromStart = Infinity; // Set distance to infinity for all cells initially
+    cell.previousCell = null; // Reset the previous cell for all cells
   }
-  startCell.distanceFromStart = 0;
+  startCell.distanceFromStart = 0; // Distance from start cell to itself is 0
 
-  const visitedCells = [];
+  const visitedCells = []; // Array to store visited cells
 
+  // If there are unvisited cells, continue the loop
   while (unvisitedCells.length > 0) {
+    // Sort unvisited cells by distance to find the closest cell
     // Sort by distance to simulate a priority queue
     unvisitedCells.sort(
       (cellA, cellB) => cellA.distanceFromStart - cellB.distanceFromStart
     );
 
-    // Take the closest cell
+    // Extract the closest cell from the unvisited cells
     const currentCell = unvisitedCells.shift();
 
+    // If currentCell is null or unreachable (distance is Infinity), terminate the algorithm
     if (!currentCell || currentCell.distanceFromStart === Infinity) {
-      // No path exists
       endTime = Date.now();
       return [visitedCells, endTime - startTime];
     }
 
-    if (currentCell.isWall) continue; // Skip walls
+    // If the current cell is a wall, skip it
+    if (currentCell.isWall) continue;
+
+    // Mark the current cell as visited and add it to the visited cells array
     currentCell.isVisited = true;
     visitedCells.push(currentCell);
 
+    // If the current cell is the target cell, terminate the algorithm
     if (currentCell.cellNumber === endCell.cellNumber) {
-      // Target reached
-      currentCell.isTarget = true;
+      currentCell.isTarget = true; // Mark the target cell
       endTime = Date.now();
       return [visitedCells, endTime - startTime];
     }
 
-    // Traverse neighbors
-    traverseFurtherInGrid(currentCell, grid, unvisitedCells);
+    // Update distances for all unvisited neighbors of the current cell
+    traverseFurtherInGrid(currentCell, grid);
   }
 
-  // No path found
+  // If the algorithm completes without finding the target, return the visited cells and time
   endTime = Date.now();
   return [visitedCells, endTime - startTime];
 };
+
 
