@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { classNames } from "../utils/helpers";
 
+// Function to retrieve algorithm-specific information based on the algorithm type
 const getAlgoInfo = (type) => {
   switch (type) {
     case "DIJKSTRA":
@@ -60,20 +61,23 @@ const getAlgoInfo = (type) => {
         gif: `/assets/dfs.gif`,
       };
 
-    default:
+    default:     // Return null if no matching algorithm type is found
       return null;
   }
 };
 
-export const InfoSideOver = ({ algorithm, onClose }) => {
-  const [info, setInfo] = useState(null);
 
+
+// Main component to display algorithm information in a side panel
+export const InfoSideOver = ({ algorithm, onClose }) => {
+  const [info, setInfo] = useState(null);   // State to store the selected algorithm's details
+// to fetch and update algorithm information whenever the `algorithm` prop changes
   useEffect(() => {
     let algorithmInfo = getAlgoInfo(algorithm);
     setInfo(algorithmInfo);
   }, [algorithm]);
 
-  if (!algorithm || !info) return null;
+  if (!algorithm || !info) return null; // If no algorithm is selected or no info is available, return nothing
   return (
     <Transition.Root show={!!algorithm} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
