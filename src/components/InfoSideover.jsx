@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";  // Implemented smooth transitions for opening and closing the panel
 import { XMarkIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { classNames } from "../utils/helpers";
 
