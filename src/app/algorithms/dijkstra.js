@@ -4,53 +4,71 @@ const getNeighbors = (currentCell, grid) => {
   const neighbors = [];
   const { col, row } = currentCell;
 
-  if (col > 0) neighbors.push(grid[row][col - 1]);
+  if (col > 0) neighbors.push(grid[row][col - 1]); // Left
+  if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]); // Right
+  if (row > 0) neighbors.push(grid[row - 1][col]); // Up
+  if (row < grid.length - 1) neighbors.push(grid[row + 1][col]); // Down
 
-  if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
-
-  if (row > 0) neighbors.push(grid[row - 1][col]);
-
-  if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
-
-  return neighbors.filter((n) => !n?.isVisited);
+  return neighbors.filter((n) => !n?.isVisited && !n?.isWall);
 };
 
-const traverseFurtherInGrid = (currentCell, grid) => {
+const traverseFurtherInGrid = (currentCell, grid, unvisitedCells) => {
   let remainingNeighbors = getNeighbors(currentCell, grid);
   for (let cell of remainingNeighbors) {
-    cell.distanceFromStart = currentCell.distanceFromStart + 1;
-    cell.previousCell = currentCell;
+    const newDistance = currentCell.distanceFromStart + 1;
+    if (newDistance < cell.distanceFromStart) {
+      cell.distanceFromStart = newDistance;
+      cell.previousCell = currentCell;
+    }
   }
 };
 
 export const dijkstra = (grid, startCell, endCell) => {
-  let startTime = Date.now();
+  const startTime = Date.now();
   let endTime;
-  let unvisitedCells = getCells(grid); // clone
+
+  // Initialize all cells
+  let unvisitedCells = getCells(grid); // Create a clone or flattened list
+  for (let cell of unvisitedCells) {
+    cell.distanceFromStart = Infinity;
+    cell.previousCell = null;
+  }
   startCell.distanceFromStart = 0;
-  let visitedCells = [];
-  while (!!unvisitedCells.length) {
+
+  const visitedCells = [];
+
+  while (unvisitedCells.length > 0) {
+    // Sort by distance to simulate a priority queue
     unvisitedCells.sort(
       (cellA, cellB) => cellA.distanceFromStart - cellB.distanceFromStart
     );
-    let currentCell = unvisitedCells.shift(); // remove 1st cell
 
-    if (!currentCell) {
+    // Take the closest cell
+    const currentCell = unvisitedCells.shift();
+
+    if (!currentCell || currentCell.distanceFromStart === Infinity) {
+      // No path exists
       endTime = Date.now();
       return [visitedCells, endTime - startTime];
     }
-    if (currentCell?.isWall) continue; // ignore walls
-    if (currentCell?.distanceFromStart === Infinity) {
-      endTime = Date.now();
-      return [visitedCells, endTime - startTime];
-    } // the walls are closed
+
+    if (currentCell.isWall) continue; // Skip walls
     currentCell.isVisited = true;
     visitedCells.push(currentCell);
+
     if (currentCell.cellNumber === endCell.cellNumber) {
+      // Target reached
       currentCell.isTarget = true;
       endTime = Date.now();
       return [visitedCells, endTime - startTime];
     }
-    traverseFurtherInGrid(currentCell, grid);
+
+    // Traverse neighbors
+    traverseFurtherInGrid(currentCell, grid, unvisitedCells);
   }
+
+  // No path found
+  endTime = Date.now();
+  return [visitedCells, endTime - startTime];
 };
+
