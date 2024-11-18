@@ -4,6 +4,7 @@ import { XMarkIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { classNames } from "../utils/helpers";
 
 // Function to retrieve algorithm-specific information based on the algorithm type
+// Reusable Helper Function: Centralizes algorithm-related data (title, description, GIF, reference link, and shortest path guarantee status).
 const getAlgoInfo = (type) => {
   switch (type) {
     case "DIJKSTRA":
