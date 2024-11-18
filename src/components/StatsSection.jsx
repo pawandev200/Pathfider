@@ -1,6 +1,6 @@
 import React from "react";
 
-// A functional component that is used in the GridBoard.jsx file to display the statistics((cells scanned, cells traveled, and time taken) of the pathfinding algorithms
+// A functional component that is used in the GridBoard.jsx file to display the statistics(cells scanned, cells traveled, and time taken) of the pathfinding algorithms
 const StatsSection = ({ stats }) => {
   return (
     <ul
