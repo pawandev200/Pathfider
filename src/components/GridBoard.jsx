@@ -352,7 +352,7 @@ const GridBoard = () => {
           </button>
         </div>
       ) : null}
-      // Container div for the grid, using Tailwind classes for styling
+      {/*Container div for the grid, using Tailwind classes for styling */}
       <div className="grid grid-cols-gridmap overflow-auto w-full px-4 justify-start md:justify-center items-center my-3">
         {/* Iterate over the rows of the grid */}
         {gridBoardCells.current.map((row, rowIndex) => {
