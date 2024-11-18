@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getCellObjects, getPath } from "../utils/helpers";
-import Cell from "./Cell";
-import { InfoSideOver } from "./InfoSideover";
-import StatsSection from "./StatsSection";
+import React, { useEffect, useRef, useState } from "react"; 
+import { getCellObjects, getPath } from "../utils/helpers"; // Helper functions for grid initialization and pathfinding
+import Cell from "./Cell"; // Individual grid cell component
+import { InfoSideOver } from "./InfoSideover"; // Side overlay for algorithm information
+import StatsSection from "./StatsSection"; // Component for displaying stats
 import {
   MagnifyingGlassIcon,
   PaperAirplaneIcon,
@@ -13,65 +13,45 @@ import {
   MapPinIcon,
   ForwardIcon,
   CubeTransparentIcon,
-} from "@heroicons/react/24/outline";
-import { GithubLogo } from "./GithubLogo";
-import AlgoSelect from "./AlgoSelect";
+} from "@heroicons/react/24/outline"; // Icons for UI elements
+import { GithubLogo } from "./GithubLogo"; // GitHub logo for source code link
+import AlgoSelect from "./AlgoSelect"; // Dropdown for algorithm selection
 import {
   dijkstra,
   DFS,
   BFS,
   generateRandomMaze,
   generateRecursiveMaze,
-} from "../app/index";
+} from "../app/index"; // Pathfinding algorithms and maze generators
 
+// Main GridBoard component
 const GridBoard = () => {
-  const gridBoardCells = useRef(getCellObjects());
+  const gridBoardCells = useRef(getCellObjects()); // Grid state as a mutable ref
+  const [startPoint, setStartPoint] = useState(null); // Start point
+  const [endPoint, setEndPoint] = useState(null); // End point
+  const [foundPath, setFoundPath] = useState(null); // Shortest path
+  const [cellsScanned, setCellsScanned] = useState(0); // Number of visited cells
+  const [cellsTraveled, setCellsTraveled] = useState(0); // Cells in the final path
+  const [timeTaken, setTimeTaken] = useState(0); // Execution time
+  const [isMouseDown, setIsMouseDown] = useState(false); // Mouse click state for drawing walls
+  const [renderFlag, setRenderFlag] = useState(false); // Forces re-render
+  const [selectedAlgo, setSelectedAlgo] = useState(null); // Currently selected algorithm
+  const [showInfoOf, setShowInfoOf] = useState(null); // Algorithm info overlay
+  const [speed, setSpeed] = useState("medium"); // Animation speed
 
-  const [startPoint, setStartPoint] = useState(null);
-  const [endPoint, setEndPoint] = useState(null);
-  const [foundPath, setFoundPath] = useState(null);
-
-  const [cellsScanned, setCellsScanned] = useState(0);
-  const [cellsTraveled, setCellsTraveled] = useState(0);
-  const [timeTaken, setTimeTaken] = useState(0);
-
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [renderFlag, setRenderFlag] = useState(false);
-
-  const [selectedAlgo, setSelectedAlgo] = useState(null);
-
-  const [showInfoOf, setShowInfoOf] = useState(null);
-
-  const [speed, setSpeed] = useState("medium");
-
+  // Maps speed to animation delay values
   const getSpeedMultiplier = () => {
     switch (speed) {
-      case "fast":
-        return {
-          algorithm: 3,
-          path: 15,
-        };
-      case "medium":
-        return {
-          algorithm: 10,
-          path: 20,
-        };
-      case "slow":
-        return {
-          algorithm: 100,
-          path: 125,
-        };
+      case "fast": return { algorithm: 3, path: 15 };
+      case "medium": return { algorithm: 10, path: 20 };
+      case "slow": return { algorithm: 100, path: 125 };
     }
   };
 
+  // Resets visual and stats data
   const resetBoardData = () => {
     document.querySelectorAll(`.cell`).forEach((item) => {
-      if (item.classList.contains("cell-visited")) {
-        item.classList.remove("cell-visited");
-      }
-      if (item.classList.contains("cell-path")) {
-        item.classList.remove("cell-path");
-      }
+      item.classList.remove("cell-visited", "cell-path");
     });
     setFoundPath(null);
     setCellsScanned(0);
@@ -79,29 +59,28 @@ const GridBoard = () => {
     setTimeTaken(0);
   };
 
+  // Clears the entire grid
   const clearBoard = () => {
     gridBoardCells.current = getCellObjects(true, true, gridBoardCells.current);
     resetBoardData();
   };
 
+  // Clears only the path (retains walls)
   const clearPath = () => {
-    gridBoardCells.current = getCellObjects(
-      true,
-      false,
-      gridBoardCells.current
-    ); // only reset path and ignore walls
+    gridBoardCells.current = getCellObjects(true, false, gridBoardCells.current);
     resetBoardData();
   };
 
+  // Handles mouse entering a cell (for drawing walls)
   const onMouseEnter = (rowIndex, colIndex) => {
     setRenderFlag(!renderFlag);
     let element = gridBoardCells.current[rowIndex];
     if (!isMouseDown) return;
     if (element[colIndex].isStartPoint || element[colIndex].isEndPoint) return;
-
     element[colIndex].isWall = !element[colIndex].isWall;
   };
 
+  // Handles cell click (setting start/end points or toggling walls)
   const onCellClick = (cell, rowIndex, colIndex) => {
     let clickedCell = gridBoardCells.current[rowIndex][colIndex];
     if (clickedCell.isWall) {
@@ -119,28 +98,20 @@ const GridBoard = () => {
       clickedCell.isEndPoint = false;
       return;
     }
-
     if (startPoint && endPoint) {
       clickedCell.isWall = true;
       return;
     }
     if (!startPoint) {
-      setStartPoint({
-        ...clickedCell,
-        isStartPoint: true,
-        distanceFromStart: 0,
-      });
+      setStartPoint({ ...clickedCell, isStartPoint: true, distanceFromStart: 0 });
       clickedCell.isStartPoint = true;
-      clickedCell.distanceFromStart = 0;
     } else if (startPoint) {
-      setEndPoint({
-        ...clickedCell,
-        isEndPoint: true,
-      });
+      setEndPoint({ ...clickedCell, isEndPoint: true });
       clickedCell.isEndPoint = true;
     }
   };
 
+  // Animates algorithm progress
   const animateAlgo = (visitedCells, path) => {
     for (let i = 0; i < visitedCells.length; i++) {
       setTimeout(() => {
