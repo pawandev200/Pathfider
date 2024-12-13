@@ -38,13 +38,13 @@ This web application visualizes how algorithms like Dijkstra's, BFS, and DFS nav
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/pawandev200/pathfinding-visualizer.git
+   https://github.com/pawandev200/Pathfinding-Visualizer.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd pathfinding-visualizer
+   cd Pathfinding-Visualizer
    ```
 
 3. Install dependencies:
