@@ -59,7 +59,7 @@ This web application visualizes how algorithms like Dijkstra's, BFS, and DFS nav
    npm run dev
    ```
 
-5. Open your browser and navigate to `http://localhost:3000` to access the app.
+5. Open your browser and navigate to `http://localhost:5173` to access the app.
 
 ---
 
